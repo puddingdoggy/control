@@ -1,28 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    // Start is called before the first frame update
-    private Rigidbody2D rb;
-    [SerializeField] private int speed = 1;
+    public float speed = 5f;
+
+    private Vector2 movementInput;
+    private Rigidbody2D rb2D;
+
+    private Animator animator;
 
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        rb2D = GetComponent<Rigidbody2D>();
+
+        animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
-        Move();
+        movementInput.x = Input.GetAxisRaw("Horizontal");
+        movementInput.y = Input.GetAxisRaw("Vertical");
+
+        movementInput = movementInput.normalized;
+
+        animator.SetFloat("Horizontal",movementInput.x);
+        animator.SetFloat("Vertical", movementInput.y);
+        animator.SetFloat("Speed", movementInput.magnitude);
     }
-    private void Move()
+
+    private void FixedUpdate()
     {
-        float dirX = Input.GetAxisRaw("Horizontal");
-        float dirY = Input.GetAxisRaw("Vertical");
-        rb.velocity = new Vector2(dirX * speed, dirY * speed);
+        rb2D.velocity = movementInput * speed;
     }
+
+
 }
